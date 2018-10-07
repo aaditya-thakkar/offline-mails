@@ -46,10 +46,10 @@ app.post('/send', (req, res) => {
   smtpTransport.sendMail(mailOptions, (error, response) => {
     if (error) {
       console.log(error);
-      res.end('error');
+      res.send('error');
     } else {
       console.log(`Message sent: ${response.message}`);
-      res.end('sent');
+      res.send('sent');
     }
   });
 });
