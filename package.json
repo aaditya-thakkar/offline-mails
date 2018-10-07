@@ -110,7 +110,9 @@
     ]
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
+    "body-parser": "^1.18.3",
     "chalk": "^2.4.1",
     "compression": "^1.7.2",
     "cross-env": "^5.2.0",
@@ -124,6 +126,7 @@
     "ip": "^1.1.5",
     "lodash": "^4.17.10",
     "minimist": "^1.2.0",
+    "nodemailer": "^4.6.8",
     "prop-types": "^15.6.1",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

@@ -1,5 +1,8 @@
 /* eslint consistent-return:0 */
 
+const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
+
 const express = require('express');
 const logger = require('./logger');
 
@@ -14,8 +17,42 @@ const ngrok =
 const { resolve } = require('path');
 const app = express();
 
+const smtpTransport = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'thakkar.aadi1@gmail.com',
+    pass: '@@d!th@kk@r1997',
+  },
+});
+
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 // app.use('/api', myApi);
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.post('/send', (req, res) => {
+  console.log(req);
+  const { host, to } = req.body;
+  const rand = Math.floor(Math.random() * 10000 + 54);
+
+  const link = `${host}/verify?id=${rand}`;
+
+  const mailOptions = {
+    to,
+    subject: 'Please confirm your Email account',
+    html: `Hello,<br> Please Click on the link to verify your email.<br><a href=${link}>Click here to verify</a>`,
+  };
+  console.log(mailOptions);
+  smtpTransport.sendMail(mailOptions, (error, response) => {
+    if (error) {
+      console.log(error);
+      res.end('error');
+    } else {
+      console.log(`Message sent: ${response.message}`);
+      res.end('sent');
+    }
+  });
+});
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
