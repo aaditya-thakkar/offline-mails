@@ -1,8 +1,11 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { Router, Route } from 'react-router';
+
 import styled from 'styled-components';
 
 import HomePage from 'containers/HomePage';
+import history from './history';
 
 const AppWrapper = styled.div`
   max-width: calc(768px + 16px * 2);
@@ -19,7 +22,12 @@ export default function App() {
       <Helmet titleTemplate="%s - OMG" defaultTitle="Offline Mails Grabber">
         <meta name="description" content="Offline Mails Grabber" />
       </Helmet>
-      <HomePage />
+      <Router history={history}>
+        <div>
+          <Route exact path="/" component={HomePage} />
+          <Route path="/otp" component={HomePage} />
+        </div>
+      </Router>
     </AppWrapper>
   );
 }

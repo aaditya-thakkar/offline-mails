@@ -62,10 +62,8 @@ app.get('/verify', (req, res) => {
   if (`${req.protocol}://${req.get('host')}` === reqHost) {
     console.log('Domain is matched. Information is from Authentic email');
     if (req.query.id === randomToken.toString()) {
-      console.log('email is verified');
-      res.send(
-        `<h1>Email ${mailOptions.to} is been Successfully verified</h1>`,
-      );
+      console.log(`email ${mailOptions.to} is verified`);
+      res.redirect('http://localhost:3000/otp');
     } else {
       console.log('email is not verified');
       res.send('<h1>Bad Request</h1>');

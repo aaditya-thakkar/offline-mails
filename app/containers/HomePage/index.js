@@ -3,9 +3,17 @@ import axios from 'axios';
 
 import { Helmet } from 'react-helmet';
 import Button from 'components/Button';
+import Input from 'components/Input';
 
 /* eslint-disable react/prefer-stateless-function */
 export default class HomePage extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      emailAddress: '',
+    };
+  }
+
   render() {
     return (
       <article>
@@ -13,8 +21,13 @@ export default class HomePage extends React.PureComponent {
           <title>Offline Mails Grabber</title>
         </Helmet>
         <div>
-          <p>Hello World</p>
-          <p>How are you?</p>
+          <Input
+            id="email"
+            type="email"
+            placeholder="Enter your email"
+            value={this.state.emailAddress}
+            onChange={this.onChangeEmailValue}
+          />
           <Button onClick={this.onVerifyClick}>
             Click Here to verify your mail id
           </Button>
@@ -23,13 +36,19 @@ export default class HomePage extends React.PureComponent {
     );
   }
 
+  onChangeEmailValue = event => {
+    this.setState({
+      emailAddress: event.target.value,
+    });
+  };
+
   onVerifyClick = () => {
     axios({
       url: 'http://localhost:3000/send',
       method: 'post',
       data: {
         host: 'http://localhost:3000',
-        to: '201401009@daiict.ac.in',
+        to: this.state.emailAddress,
       },
     }).then(data => {
       if (data === 'sent') {
