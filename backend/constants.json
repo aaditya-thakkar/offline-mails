@@ -1,0 +1,12 @@
+{
+  "mailReplyServer": {
+    "port": 8080,
+    "host": "localhost"
+  },
+  "smsServer": {
+    "port": 5050,
+    "host": "localhost",
+    "receiveEndpoint": "receive",
+    "smsEndpoint": "sms"
+  }
+}
