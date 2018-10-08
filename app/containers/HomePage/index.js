@@ -28,7 +28,7 @@ export default class HomePage extends React.PureComponent {
       url: 'http://localhost:3000/send',
       method: 'post',
       data: {
-        host: 'http://localhost:3000/send',
+        host: 'http://localhost:3000',
         to: '201401009@daiict.ac.in',
       },
     }).then(data => {
