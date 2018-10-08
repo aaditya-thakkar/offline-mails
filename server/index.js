@@ -1,5 +1,8 @@
 /* eslint consistent-return:0 */
 
+const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
+
 const express = require('express');
 const logger = require('./logger');
 
@@ -14,8 +17,63 @@ const ngrok =
 const { resolve } = require('path');
 const app = express();
 
+const smtpTransport = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'thakkar.aadi1@gmail.com',
+    pass: '@@d!th@kk@r1997',
+  },
+});
+
+let randomToken;
+let mailOptions;
+let reqHost;
+
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 // app.use('/api', myApi);
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.post('/send', (req, res) => {
+  const { to, host } = req.body;
+  reqHost = host;
+  randomToken = Math.floor(Math.random() * 10000 + 54);
+
+  const link = `${host}/verify?id=${randomToken}`;
+
+  mailOptions = {
+    to,
+    subject: 'Please confirm your Email account',
+    html: `Hello,<br> Please Click on the link to verify your email.<br><a href=${link}>Click here to verify</a>`,
+  };
+  console.log(mailOptions);
+  smtpTransport.sendMail(mailOptions, (error, response) => {
+    if (error) {
+      console.log(error);
+      res.send('error');
+    } else {
+      console.log(`Message sent: ${response.message}`);
+      res.send('sent');
+    }
+  });
+});
+
+app.get('/verify', (req, res) => {
+  if (`${req.protocol}://${req.get('host')}` === reqHost) {
+    console.log('Domain is matched. Information is from Authentic email');
+    if (req.query.id === randomToken.toString()) {
+      console.log('email is verified');
+      res.send(
+        `<h1>Email ${mailOptions.to} is been Successfully verified</h1>`,
+      );
+    } else {
+      console.log('email is not verified');
+      res.send('<h1>Bad Request</h1>');
+    }
+  } else {
+    res.send('<h1>Request is from unknown source</h1>');
+  }
+});
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
