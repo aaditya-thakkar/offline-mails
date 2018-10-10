@@ -19,7 +19,6 @@ while 1:
         while 1:
             data = conn.recv(1024)
             if not data: break
-            print 'haaaa'
             logger(['data receive', data])
     except KeyboardInterrupt:
         logger('Keyboard interrupt received')
