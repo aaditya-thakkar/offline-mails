@@ -24,4 +24,15 @@ module.exports = (app, db) => {
         }
       });
   });
+
+  app.post('/users', (req, res) => {
+    const user = { name: req.body.name, email: req.body.email, phoneNumber: req.body.phoneNumber, verified: req.body.verified, otp: req.body.otp};
+       db.collection('users').insertOne(user, (err, result) => {
+            if (err) {
+                res.send({ 'error': 'An error has occurred' });
+            } else {
+                res.send(result.ops[0]);
+            }
+       });
+    });
 };
