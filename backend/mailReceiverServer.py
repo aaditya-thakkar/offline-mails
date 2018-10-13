@@ -18,16 +18,16 @@ def connect_inbox():
 
 def extract_mail_ids(conn):
     logger('extracting mail ids')
-    _, data = conn.search(None, 'UNSEEN')
+    _, data = conn.search(None, 'ALL')
     return data[0].split() # here ids are wrapped in array
 
-def fetch_mail_for_id(conn, id):
-    logger(['fetching mail for id', id])
-    typ, data = conn.fetch(id, '(RFC822)')
+def fetch_mail_for_id(conn, ids):
+    logger(['fetching mail for id', ids])
+    typ, data = conn.fetch(ids, '(RFC822)')
     # print 'Message %s\n%s\n' % (id, data[0][1])
     # original = email.message_from_string(data[0][1])
-    logger(['fetched mail for', id])
-    return data[0][1]
+    logger(['fetched mail for', data])
+    return data
 
 def parse_mail_from(fromStr):
     mail_from = re.search("<(.+?)>", fromStr).group(1)
@@ -89,13 +89,16 @@ def close_server():
 #     except KeyboardInterrupt:
 #         close_server()
 #         break
-
+mailConn = connect_inbox()
 try:
-    mailConn = connect_inbox()
     mailIds = extract_mail_ids(mailConn)
-    logger(['extracted mail ids', mailIds[-1]])
-    fetched_mail = fetch_mail_for_id(mailConn, mailIds[-1])
-    parsed_mail = parse_mail(fetched_mail)
+    # logger(['extracted mail ids', mailIds[-50:]])
+    mail_ids_to_fetch = mailIds[-5] # recent mail ids in the start of list
+    fetched_mails = fetch_mail_for_id(mailConn, str(mailIds[-2]) +':'+str(mailIds[-1]))
+    # logger(['fetched mails here are', fetched_mails])
+    # for mail in fetched_mails:
+    #     logger(['mail to parse', mail])
+        # parsed_mail = parse_mail(mail[1])
 except KeyboardInterrupt:
     close_server()
 # fetch_mail_for_id(mailIds[0])
