@@ -8,6 +8,7 @@ const logger = require('./logger');
 
 const argv = require('./argv');
 const port = require('./port');
+const send_otp = require('./send_otp');
 const setup = require('./middlewares/frontendMiddleware');
 const isDev = process.env.NODE_ENV !== 'production';
 const ngrok =
@@ -72,6 +73,12 @@ app.get('/verify', (req, res) => {
     res.send('<h1>Request is from unknown source</h1>');
   }
 });
+
+
+app.get('/send_otp', (req, res) => {
+  send_otp(req,res);
+});
+
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
