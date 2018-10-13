@@ -17,6 +17,7 @@ let mailIdsCache = {};
 
 app.post('/sms', async (req, res) => {
   const twiml = new MessagingResponse();
+  twiml.message("Sorry I cannot recognise this input");
   if (req.body.Body.toLowerCase() === 'fetch mails') {
     const response = await axios.get(
       `http://localhost:8082/fetchMails?phoneNumber=${PHONE_NUMBER}`,
@@ -25,9 +26,26 @@ app.post('/sms', async (req, res) => {
     const { message, mailIds } = parseMessage(response.data);
     mailIdsCache[PHONE_NUMBER] = mailIds;
     twiml.message(message);
-    res.writeHead(200, { 'Content-Type': 'text/xml' });
-    res.end(twiml.toString());
   }
+
+  if (Number.isInteger(req.body.Body) {
+    let mailNumber = Number(req.body.Body);
+    if(mailNumber >=0 && mailNumber <=9){
+       const response = await axios.get(
+         `http://localhost:8082/mailLookup?id=${mailIdsCache[PHONE_NUMBER][mailNumber]}`,
+       );
+    }
+    else{
+      twiml.message("Sorry I cannot recognise this input");
+    }
+  }
+  else{
+    twiml.message("Sorry I cannot recognise this input");
+  }
+
+  res.writeHead(200, { 'Content-Type': 'text/xml' });
+  res.end(twiml.toString());
+
 });
 
 http.createServer(app).listen(1337, () => {
