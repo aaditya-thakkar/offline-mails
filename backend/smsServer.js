@@ -1,20 +1,29 @@
-// eslint-disable-file no-use-before-define 
-var express = require('express');
-var bodyParser = require('body-parser');
-var axios = require('axios');
-var serverConstants = require('./constants.json');
+/* eslint-disable no-unused-vars */
+// eslint-disable-file no-use-before-define
+const express = require('express');
+const bodyParser = require('body-parser');
+const axios = require('axios');
+const serverConstants = require('./constants.json');
 
-var { host: mailReplyHost, port: mailReplyPort } = serverConstants.mailReplyServer;
-var { host: smsServerHost, port: smsServerPort, receiveEndpoint, smsEndpoint } = serverConstants.smsServer;
-var mailReplyUrl = 'http://' + mailReplyHost + ':' + mailReplyPort
-var app = express();
+const {
+  host: mailReplyHost,
+  port: mailReplyPort,
+} = serverConstants.mailReplyServer;
+const {
+  host: smsServerHost,
+  port: smsServerPort,
+  receiveEndpoint,
+  smsEndpoint,
+} = serverConstants.smsServer;
+const mailReplyUrl = `http://${mailReplyHost}:${mailReplyPort}`;
+const app = express();
 
 function logger(...msg) {
   console.log('====>> ', ...msg);
 }
 
 function relativeUrl(endpoint) {
-  return '/' + endpoint;
+  return `/${endpoint}`;
 }
 
 app.use(bodyParser.json());
@@ -23,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 /**
  * /receive
  */
-app.post(relativeUrl(receiveEndpoint), function (req, res) {
+app.post(relativeUrl(receiveEndpoint), (req, res) => {
   logger('recieved mail');
   res.send('ack');
 });
@@ -31,17 +40,23 @@ app.post(relativeUrl(receiveEndpoint), function (req, res) {
 /**
  * /sms
  */
-app.get(relativeUrl(smsEndpoint), function (req, res) {
+app.get(relativeUrl(smsEndpoint), (req, res) => {
   logger('sms received');
   logger('forwarding mail on', mailReplyUrl);
-  axios.post(mailReplyUrl, {
-    foo: 'bar'
-  }).then(
-    function(res) { logger('response received') },
-    function(err) { logger('error'); }
-  );
+  axios
+    .post(mailReplyUrl, {
+      foo: 'bar',
+    })
+    .then(
+      response => {
+        logger('response received');
+      },
+      error => {
+        logger('error');
+      },
+    );
 });
 
-const server = app.listen(smsServerPort, function () {
+const server = app.listen(smsServerPort, () => {
   logger('app running on port', server.address().port);
 });

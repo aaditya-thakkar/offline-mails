@@ -1,7 +1,6 @@
 const { ObjectID } = require('mongodb');
 
 module.exports = (app, db) => {
-  console.log(db);
   app.get('/users/:id', (req, res) => {
     const { id } = req.params;
     const details = { userId: new ObjectID(id) };

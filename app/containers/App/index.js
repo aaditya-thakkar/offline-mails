@@ -5,6 +5,7 @@ import { Router, Route } from 'react-router';
 import styled from 'styled-components';
 
 import HomePage from 'containers/HomePage';
+import OtpAuth from 'containers/OtpAuth';
 import history from './history';
 
 const AppWrapper = styled.div`
@@ -25,7 +26,7 @@ export default function App() {
       <Router history={history}>
         <div>
           <Route exact path="/" component={HomePage} />
-          <Route path="/otp" component={HomePage} />
+          <Route path="/otp" component={OtpAuth} />
         </div>
       </Router>
     </AppWrapper>

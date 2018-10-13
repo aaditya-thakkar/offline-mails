@@ -8,7 +8,7 @@ const logger = require('./logger');
 
 const argv = require('./argv');
 const port = require('./port');
-const send_otp = require('./send_otp');
+const sendOtp = require('./send_otp');
 const setup = require('./middlewares/frontendMiddleware');
 const isDev = process.env.NODE_ENV !== 'production';
 const ngrok =
@@ -74,11 +74,9 @@ app.get('/verify', (req, res) => {
   }
 });
 
-
-app.get('/send_otp', (req, res) => {
-  send_otp(req,res);
+app.post('/sendOtp', (req, res) => {
+  sendOtp(req, res);
 });
-
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
