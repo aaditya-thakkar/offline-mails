@@ -1,9 +1,11 @@
 import React from 'react';
 import axios from 'axios';
+import OtpInput from 'react-otp-input';
 
 import { Helmet } from 'react-helmet';
 import Button from 'components/Button';
 import Input from 'components/Input';
+import CenteredSection from './CenteredSection';
 
 /* eslint-disable react/prefer-stateless-function */
 export default class HomePage extends React.PureComponent {
@@ -12,6 +14,8 @@ export default class HomePage extends React.PureComponent {
     this.state = {
       phoneNumber: '',
       otp: '',
+      isDisabled: true,
+      hasErrored: false,
     };
   }
 
@@ -21,28 +25,46 @@ export default class HomePage extends React.PureComponent {
         <Helmet>
           <title>Offline Mails Grabber</title>
         </Helmet>
-        <div>
-          <text>Enter your phone number</text>
-          <Input
-            id="contact"
-            type="tel"
-            placeholder="Enter your phone number"
-            value={this.state.phoneNumber}
-            onChange={this.onChangeContactValue}
-          />
-          <Button onClick={this.onSendOtpClick}>
-            Send OTP for verification
-          </Button>
-          <text>Enter OTP</text>
-          <Input
-            id="otp"
-            type="number"
-            placeholder="Enter OTP"
-            value={this.state.otp}
-            onChange={this.onChangeOTPValue}
-          />
-          <Button onClick={this.onVerifyOtpClick}>Verify OTP</Button>
-        </div>
+        <CenteredSection>
+          <div>
+            <div className="rowSection">
+              <text>Enter your phone number</text>
+              <Input
+                id="contact"
+                type="tel"
+                placeholder="Enter your phone number"
+                value={this.state.phoneNumber}
+                onChange={this.onChangeContactValue}
+              />
+            </div>
+            <Button onClick={this.onSendOtpClick}>
+              {'Send OTP For Verification'}
+            </Button>
+            {this.state.isDisabled ? null : (
+              <div>
+                <text>Enter OTP</text>
+                <OtpInput
+                  inputStyle={{
+                    width: '3rem',
+                    height: '3rem',
+                    margin: '0 1rem',
+                    fontSize: '2rem',
+                    borderRadius: 4,
+                    border: '1px solid rgba(0,0,0,0.3)',
+                  }}
+                  numInputs={4}
+                  isDisabled={this.state.isDisabled}
+                  hasErrored={this.state.hasErrored}
+                  errorStyle="error"
+                  onChange={this.onChangeOTPValue}
+                  separator={<span>-</span>}
+                  shouldAutoFocus
+                />
+                <Button onClick={this.onVerifyOtpClick}>Verify OTP</Button>
+              </div>
+            )}
+          </div>
+        </CenteredSection>
       </article>
     );
   }
@@ -53,23 +75,25 @@ export default class HomePage extends React.PureComponent {
     });
   };
 
-  onChangeOTPValue = event => {
+  onChangeOTPValue = otp => {
     this.setState({
-      otp: event.target.value,
+      otp,
     });
   };
 
   onSendOtpClick = () => {
-    const url = new URL(window.location.href);
-    const email = url.searchParams.get('email');
     axios({
       url: 'http://localhost:3000/sendOtp',
       method: 'post',
       data: {
-        email,
+        name: this.state.name,
+        email: this.state.email,
         phoneNumber: this.state.phoneNumber,
       },
     }).then(data => {
+      this.setState({
+        isDisabled: false,
+      });
       if (data === 'sent') {
         console.log('otp has been sent');
       }
@@ -82,12 +106,19 @@ export default class HomePage extends React.PureComponent {
       method: 'post',
       data: {
         otp: this.state.otp,
+        email: this.state.email,
         phoneNumber: this.state.phoneNumber,
       },
-    }).then(data => {
-      if (data === 'verified') {
-        console.log('otp has been verified');
-      }
-    });
+    })
+      .then(data => {
+        if (data === 'verified') {
+          console.log('otp has been verified');
+        }
+      })
+      .catch(() => {
+        this.setState({
+          hasErrored: true,
+        });
+      });
   };
 }
