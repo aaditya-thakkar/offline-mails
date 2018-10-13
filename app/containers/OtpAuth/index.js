@@ -10,8 +10,6 @@ export default class HomePage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      name: '',
       phoneNumber: '',
       otp: '',
     };
@@ -24,22 +22,6 @@ export default class HomePage extends React.PureComponent {
           <title>Offline Mails Grabber</title>
         </Helmet>
         <div>
-          <text>Enter your name</text>
-          <Input
-            id="name"
-            type="text"
-            placeholder="Enter your name"
-            value={this.state.name}
-            onChange={this.onChangeNameValue}
-          />
-          <text>Enter your email</text>
-          <Input
-            id="email"
-            type="email"
-            placeholder="Enter your email"
-            value={this.state.email}
-            onChange={this.onChangeEmailValue}
-          />
           <text>Enter your phone number</text>
           <Input
             id="contact"
@@ -65,18 +47,6 @@ export default class HomePage extends React.PureComponent {
     );
   }
 
-  onChangeEmailValue = event => {
-    this.setState({
-      email: event.target.value,
-    });
-  };
-
-  onChangeNameValue = event => {
-    this.setState({
-      name: event.target.value,
-    });
-  };
-
   onChangeContactValue = event => {
     this.setState({
       phoneNumber: event.target.value,
@@ -90,12 +60,13 @@ export default class HomePage extends React.PureComponent {
   };
 
   onSendOtpClick = () => {
+    const url = new URL(window.location.href);
+    const email = url.searchParams.get('email');
     axios({
       url: 'http://localhost:3000/sendOtp',
       method: 'post',
       data: {
-        name: this.state.name,
-        email: this.state.email,
+        email,
         phoneNumber: this.state.phoneNumber,
       },
     }).then(data => {
@@ -111,7 +82,6 @@ export default class HomePage extends React.PureComponent {
       method: 'post',
       data: {
         otp: this.state.otp,
-        email: this.state.email,
         phoneNumber: this.state.phoneNumber,
       },
     }).then(data => {

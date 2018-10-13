@@ -21,11 +21,9 @@ function sendOtp(req, res) {
   res.send('otp sent');
 
   axios
-    .post('http://localhost:8082/users', {
-      name: req.body.name,
+    .put('http://localhost:8082/setUserOtp', {
       email: req.body.email,
       phoneNumber: pNum,
-      verified: 'false',
       otp,
     })
     .then(() => {

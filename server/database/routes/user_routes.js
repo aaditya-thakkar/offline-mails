@@ -23,19 +23,15 @@ module.exports = (app, db) => {
       });
   });
 
-  app.post('/users', (req, res) => {
-    const user = {
-      name: req.body.name,
-      email: req.body.email,
-      phoneNumber: req.body.phoneNumber,
-      verified: req.body.verified,
-      otp: req.body.otp,
-    };
-    db.collection('users').insertOne(user, (err, result) => {
+  app.put('/setUserOtp', (req, res) => {
+    const { phoneNumber, email, otp } = req.body;
+    const user = { phoneNumber, verified: false, otp };
+    const details = { email };
+    db.collection('users').updateOne(details, { $set: user }, err => {
       if (err) {
         res.send({ error: 'An error has occurred' });
       } else {
-        res.send(result.ops[0]);
+        res.send(user);
       }
     });
   });
@@ -56,8 +52,8 @@ module.exports = (app, db) => {
   });
 
   app.post('/addUser', (req, res) => {
-    const { accessToken, refreshToken, userId, name, email } = req.body;
-    const details = { accessToken, refreshToken, userId, name, email };
+    const { tokens, userId, name, email } = req.body;
+    const details = { tokens, userId, name, email };
 
     db.collection('users').insertOne(details, (err, result) => {
       if (err) {
