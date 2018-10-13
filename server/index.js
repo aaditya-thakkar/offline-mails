@@ -18,6 +18,7 @@ const ngrok =
     : false;
 const { resolve } = require('path');
 const app = express();
+const { getAuthUrl, getOAuthClient } = require('./oauth');
 
 const smtpTransport = nodemailer.createTransport({
   service: 'gmail',
@@ -33,6 +34,20 @@ let reqHost;
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 // app.use('/api', myApi);
+// app.use((req, res, next) => {
+//   res.header('content-type', 'application/json');
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+//   res.header(
+//     'Access-Control-Allow-Headers',
+//     'Origin, X-Requested-With, Content-Type, Accept',
+//   );
+//   if (req.method === 'OPTIONS') {
+//     res.sendStatus(200);
+//   } else {
+//     next();
+//   }
+// });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -95,6 +110,35 @@ app.post('/verifyOtp', async (req, res) => {
   } else {
     res.send('enter valid otp');
   }
+});
+
+// app.get('/google/auth', (req, res) => {
+//   const url = getAuthUrl();
+//   console.log('====> url', url);
+//   res.send(url);
+// });
+
+app.get('/authcb', (req, res) => {
+  var oauth2Client = getOAuthClient();
+  var session = req.session;
+  var code = req.query.code; // the query param code
+  console.log('===> in authcb haha', code);
+  oauth2Client.getToken(code, function(err, tokens) {
+    // Now tokens contains an access_token and an optional refresh_token. Save them.
+    console.log('===> got token', tokens);
+    if(!err) {
+      oauth2Client.setCredentials(tokens);
+      //saving the token to current session
+      // session["tokens"]=tokens;
+      res.redirect('http://localhost:3000/otp');
+      // res.end('success');
+    }
+    else{
+      res.send(`
+          &lt;h3&gt;Login failed!!&lt;/h3&gt;
+      `);
+    }
+  });
 });
 
 // In production we need to pass these values in instead of relying on webpack
