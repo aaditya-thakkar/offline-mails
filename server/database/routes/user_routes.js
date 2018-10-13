@@ -55,6 +55,19 @@ module.exports = (app, db) => {
     });
   });
 
+  app.post('/addUser', (req, res) => {
+    const { accessToken, refreshToken, userId, name, email } = req.body;
+    const details = { accessToken, refreshToken, userId, name, email };
+
+    db.collection('users').insertOne(details, (err, result) => {
+      if (err) {
+        res.send({ error: 'An error has occurred' });
+      } else {
+        res.send(result.ops[0]);
+      }
+    });
+  });
+
   app.get('/getOtp', (req, res) => {
     const { phoneNumber } = req.query;
     const details = { phoneNumber: `+91${phoneNumber}` };

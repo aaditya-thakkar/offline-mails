@@ -19,10 +19,9 @@ export default class HomePage extends React.PureComponent {
       url: 'http://localhost:3000/google/auth',
       method: 'get',
     }).then(url => {
-      console.log('====> [onGoogleClick]response url', url.data);
       window.open(url.data, '_self');
     });
-  }
+  };
 
   render() {
     return (
