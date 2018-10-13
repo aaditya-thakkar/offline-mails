@@ -11,20 +11,22 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var userId_mails_map = {};
+const PHONE_NUMBER = '8320986343';
 
-app.post('/sms', (req, res) => {
+let mailIdsCache = {};
+
+app.post('/sms', async (req, res) => {
   const twiml = new MessagingResponse();
-  if(req.body.Body.toLowerCase() === "fetch mails"){
-  axios.get('http://localhost:8082/mail?phoneNumber='+request.body.From)
-    .then(function(response){
+  if (req.body.Body.toLowerCase() === 'fetch mails') {
+    const response = await axios.get(
+      `http://localhost:8082/fetchMails?phoneNumber=${PHONE_NUMBER}`,
+    );
     console.log(response.data);
-    var tuple = parseMessage(response.data);
-    userId_mails_map = tuple.userId_mails_map;
-    twiml.message(tuple.message);
+    const { message, mailIds } = parseMessage(response.data);
+    mailIdsCache[PHONE_NUMBER] = mailIds;
+    twiml.message(message);
     res.writeHead(200, { 'Content-Type': 'text/xml' });
     res.end(twiml.toString());
-  }); 
   }
 });
 
