@@ -14,6 +14,16 @@ export default class HomePage extends React.PureComponent {
     };
   }
 
+  onGoogleClick = () => {
+    axios({
+      url: 'http://localhost:3000/google/auth',
+      method: 'get',
+    }).then(url => {
+      console.log('====> [onGoogleClick]response url', url.data);
+      window.open(url.data, '_self');
+    });
+  }
+
   render() {
     return (
       <article>
@@ -29,6 +39,9 @@ export default class HomePage extends React.PureComponent {
             onChange={this.onChangeEmailValue}
           />
           <Button onClick={this.onVerifyClick}>
+            Click Here to verify your mail id
+          </Button>
+          <Button onClick={this.onGoogleClick}>
             Click Here to verify your mail id
           </Button>
         </div>
