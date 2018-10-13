@@ -2,8 +2,7 @@ import imaplib
 from time import sleep
 
 M = imaplib.IMAP4_SSL('imap.gmail.com')
-M.login('abhijitdev9@gmail.com', 'xxxxxxxxxx')
-# typ, data = M.search(None, 'ALL')
+M.login('abhijitdev9@gmail.com', '1Gblwf!dL')
 while 1:
   try:
     x = M.select()
