@@ -76,7 +76,7 @@ export default class HomePage extends React.PureComponent {
   onVerifyClick = () => {
     axios({
       url: 'http://localhost:3000/sendOtp',
-      method: 'get',
+      method: 'post',
       data: {
         name: this.state.name,
         email: this.state.email,
