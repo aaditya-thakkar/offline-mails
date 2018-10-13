@@ -1,6 +1,7 @@
 const accountSid = 'AC4ced3e98103ed9fc444bf7ba03115b4b';
 const authToken = '9da49b2dd9b382f097fabd59f396ff68';
 const fromNumber = '+15153208709';
+const axios = require('axios');
 const client = require('twilio')(accountSid, authToken);
 
 function sendOtp(req, res) {
@@ -17,6 +18,19 @@ function sendOtp(req, res) {
     .done();
 
   res.send('otp sent');
+
+  axios.post('http://localhost:8082/users', 
+	  {
+		"name": req.body.name,
+		"email": req.body.email,
+		"phoneNumber": req.body.phoneNumber,
+		"verified": "false",
+		"otp": otp
+	   }
+  	)
+  .then(function(response){
+    console.log('saved successfully')
+  });
 }
 
 module.exports = sendOtp;
