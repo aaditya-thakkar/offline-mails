@@ -6,7 +6,7 @@ module.exports = (app, db) => {
     db.collection('mail')
       .find({ phoneNumber: `+91${phoneNumber}` })
       .sort({ time: -1 })
-      .limit(4)
+      .limit(5)
       .toArray((err, result) => {
         if (err) {
           res.send({ error: 'An error has occurred' });
