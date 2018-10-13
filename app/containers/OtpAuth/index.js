@@ -13,6 +13,7 @@ export default class HomePage extends React.PureComponent {
       email: '',
       name: '',
       phoneNumber: '',
+      otp: '',
     };
   }
 
@@ -47,9 +48,18 @@ export default class HomePage extends React.PureComponent {
             value={this.state.phoneNumber}
             onChange={this.onChangeContactValue}
           />
-          <Button onClick={this.onVerifyClick}>
+          <Button onClick={this.onSendOtpClick}>
             Send OTP for verification
           </Button>
+          <text>Enter OTP</text>
+          <Input
+            id="otp"
+            type="number"
+            placeholder="Enter OTP"
+            value={this.state.otp}
+            onChange={this.onChangeOTPValue}
+          />
+          <Button onClick={this.onVerifyOtpClick}>Verify OTP</Button>
         </div>
       </article>
     );
@@ -73,7 +83,13 @@ export default class HomePage extends React.PureComponent {
     });
   };
 
-  onVerifyClick = () => {
+  onChangeOTPValue = event => {
+    this.setState({
+      otp: event.target.value,
+    });
+  };
+
+  onSendOtpClick = () => {
     axios({
       url: 'http://localhost:3000/sendOtp',
       method: 'post',
@@ -85,6 +101,22 @@ export default class HomePage extends React.PureComponent {
     }).then(data => {
       if (data === 'sent') {
         console.log('otp has been sent');
+      }
+    });
+  };
+
+  onVerifyOtpClick = () => {
+    axios({
+      url: 'http://localhost:3000/verifyOtp',
+      method: 'post',
+      data: {
+        otp: this.state.otp,
+        email: this.state.email,
+        phoneNumber: this.state.phoneNumber,
+      },
+    }).then(data => {
+      if (data === 'verified') {
+        console.log('otp has been verified');
       }
     });
   };

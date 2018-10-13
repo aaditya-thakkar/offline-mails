@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 
 const express = require('express');
+const axios = require('axios');
 const logger = require('./logger');
 
 const argv = require('./argv');
@@ -76,6 +77,24 @@ app.get('/verify', (req, res) => {
 
 app.post('/sendOtp', (req, res) => {
   sendOtp(req, res);
+});
+
+app.post('/verifyOtp', async (req, res) => {
+  const { otp, phoneNumber } = req.body;
+
+  const storedOTP = await axios.get(
+    `http://localhost:8082/getOtp?phoneNumber=${phoneNumber}`,
+  );
+  if (storedOTP.data.otp.toString() === otp.toString()) {
+    res.send('OTP verified');
+    axios({
+      url: 'http://localhost:8082/userVerified',
+      method: 'PUT',
+      data: { phoneNumber },
+    });
+  } else {
+    res.send('enter valid otp');
+  }
 });
 
 // In production we need to pass these values in instead of relying on webpack
