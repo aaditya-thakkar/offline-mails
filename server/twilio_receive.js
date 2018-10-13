@@ -1,13 +1,19 @@
 const http = require('http');
 const express = require('express');
 const { MessagingResponse } = require('twilio').twiml;
+const bodyParser = require('body-parser');
+const axios = require('axios');
 
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 app.post('/sms', (req, res) => {
   const twiml = new MessagingResponse();
-
-  twiml.message('The Robots are coming! Head for the hills!');
+  if(req.body.Body.toLowerCase() === "fetch mails"){
+  }
+  twiml.message('gandu pondu');
 
   res.writeHead(200, { 'Content-Type': 'text/xml' });
   res.end(twiml.toString());
