@@ -68,7 +68,11 @@ def fetch_mail_for_id(conn, ids):
     return data
 
 def split_date_str(dateStr):
-    return dateStr.split(' ' + re.search('[\\+\\-]', dateStr).group(0))[0]
+    match_grp = re.search('[\\+\\-]', dateStr)
+    suffix = ''
+    if match_grp is not None:
+        suffix = match_grp.group(0)
+    return dateStr.split(' ' + suffix)[0]
 
 def adaptTime(date):
     logger(['date to adapt', date])
@@ -168,16 +172,19 @@ def close_server():
 #         close_server()
 #         break
 user_list = get_user_list()
-mailConn = connect_inbox(user_list)
-try:
-    mailIds = extract_mail_ids(mailConn)
-    # logger(['extracted mail ids', mailIds[-50:]])
-    mail_ids_to_fetch = mailIds[-5] # recent mail ids in the start of list
-    fetched_mails = fetch_mail_for_id(mailConn, str(mailIds[-30]) +':'+str(mailIds[-1]))
-    parsed_mail_list = parse_mail_list(fetched_mails)
-    db_entry(parsed_mail_list)
-    logger(['parsed mail list', len(parsed_mail_list)])
-except KeyboardInterrupt:
-    close_server()
+while 1:
+    mailConn = connect_inbox(user_list)
+    try:
+        mailIds = extract_mail_ids(mailConn)
+        # logger(['extracted mail ids', mailIds[-50:]])
+        mail_ids_to_fetch = mailIds[-5] # recent mail ids in the start of list
+        fetched_mails = fetch_mail_for_id(mailConn, str(mailIds[-20]) +':'+str(mailIds[-1]))
+        parsed_mail_list = parse_mail_list(fetched_mails)
+        db_entry(parsed_mail_list)
+        sleep(15*60)
+        logger(['parsed mail list', len(parsed_mail_list)])
+    except KeyboardInterrupt:
+        close_server()
+        break
 # fetch_mail_for_id(mailIds[0])
 
