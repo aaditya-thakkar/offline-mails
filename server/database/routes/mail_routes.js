@@ -5,7 +5,7 @@ module.exports = (app, db) => {
     const { phoneNumber } = req.body;
     db.collection('mail')
       .find({ phoneNumber })
-      .sort({ time: -1 })
+      .sort({ date: -1 })
       .limit(40)
       .toArray((err, result) => {
         if (err) {
