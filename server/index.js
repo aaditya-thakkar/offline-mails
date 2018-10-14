@@ -101,6 +101,7 @@ app.post('/verifyOtp', async (req, res) => {
 
 app.get('/google/auth', (req, res) => {
   const url = getAuthUrl();
+  console.log('====> url', url);
   res.send(url);
 });
 
