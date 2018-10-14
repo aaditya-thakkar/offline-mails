@@ -10,13 +10,15 @@ from email.header import decode_header
 from time import sleep
 from utils import logger, my_concat
 
+FROM = 'abhisandhyasp.ap@gmail.com'
+
 user_id_access_token = {}
 
 def get_user_list():
     users = requests.get('http://localhost:8082/users').json()
     verified_users = []
     for user in users:
-        if user['verified'] is True:
+        if user.get('verified') is True:
             verified_users.append(user)
     logger(['verified users', verified_users])
     return verified_users
@@ -35,8 +37,8 @@ def refresh_token(tokens):
         headers={'content-type': 'application/x-www-form-urlencoded'},
         data={
             'grant_type': 'refresh_token',
-            'client_id': '379366710827-j826dg3jhdius4vin7e712hnm6gmek7j.apps.googleusercontent.com',
-            'client_secret': 'CEdtjXJSgxsMsAdvLKQL4e24',
+            'client_id': '259125367752-rgm0g60nt24v5q36fvrvquj23l8ss7p8.apps.googleusercontent.com',
+            'client_secret': '2y7E6CP0Gid4LjiHKqa9mm8s',
             'refresh_token': tokens['refresh_token']
         }
     )
@@ -116,20 +118,27 @@ def parse_mail(mailStr):
         else:
             continue
     
+    should_otg = parsed_mail_from == FROM
     logger(['parsed mail time is', original['Date'], adaptTime(original['Date'])])
-    return parsed_mail
+    return { 'mail' : parsed_mail, 'should_otg': should_otg, 'otg_mail': parsed_mail }
 
 def parse_mail_list(fetched_mails):
     cnt = 0 # hack in iterating, array type [mail, flags....]
     mails = []
+    should_otg = False
+    otg_mail = ''
     for mail in fetched_mails:
         # toPrint = if mail[0]: mail[0]
         # only store 0,2,4.. 
         if cnt%2 !=1 and ( cnt is not len(fetched_mails)-1 and re.search('\\Seen', fetched_mails[cnt+1]) is not None):
             logger(['mail to parse', mail[0]])
-            mails.append(parse_mail(mail[1]))
+            resultObj = parse_mail(mail[1])
+            should_otg = should_otg or resultObj['should_otg']
+            if resultObj['should_otg']:
+                otg_mail = resultObj['otg_mail']
+            mails.append(resultObj['mail'])
         cnt +=1
-    return mails
+    return { 'mails' : mails, 'should_otg': should_otg, 'otg_mail': otg_mail}
 
 def connect_sms_server():
     with open('/Users/devabnull/inout18/offline-mails/backend/constants.json') as data_file:    
@@ -154,35 +163,39 @@ def close_server():
     logger('Keyboard interrupt received')
     logger('closing server')
 
-# cnt =1
-# while 1:
-#     try:
-#         # print '=======>> mail server started on', PORT, HOST 
-#         # conn, addr = s.accept()
-#         # print '=======>> Connected by', addr
-#         while cnt:
-#             cnt = cnt -1
-#             # data = conn.recv(1024)
-#             # if not data: break
-#             # print '=======>> data received'
-            
-#             # conn.sendall(data)
+def go_otg(mail):
+    payload = { 'mail': mail }
+    headers = {'content-type': 'application/json'}
+    logger(['go_otg', mail])
+    r = requests.post('https://473f4c0c.ngrok.io/otg', data=json.dumps(payload), headers=headers)
+    logger('otg completed')
+    return r
 
-#     except KeyboardInterrupt:
-#         close_server()
-#         break
 user_list = get_user_list()
 while 1:
     mailConn = connect_inbox(user_list)
     try:
         mailIds = extract_mail_ids(mailConn)
         # logger(['extracted mail ids', mailIds[-50:]])
-        mail_ids_to_fetch = mailIds[-5] # recent mail ids in the start of list
-        fetched_mails = fetch_mail_for_id(mailConn, str(mailIds[-20]) +':'+str(mailIds[-1]))
-        parsed_mail_list = parse_mail_list(fetched_mails)
+        # mail_ids_to_fetch = mailIds[-5] # recent mail ids in the start of list
+        if (len(mailIds) == 0 ):
+            logger('no more mails :(')
+        max_mail_to_fetch = 20
+        logger(['mails unread', len(mailIds)])
+        if (len(mailIds) < 20):
+            max_mail_to_fetch = len(mailIds)
+            break
+        fetched_mails = fetch_mail_for_id(mailConn, str(mailIds[-max_mail_to_fetch]) +':'+str(mailIds[-1]))
+        resultObj = parse_mail_list(fetched_mails)
+        parsed_mail_list = resultObj['mails']
+        should_otg = resultObj['should_otg']
         db_entry(parsed_mail_list)
-        sleep(15*60)
-        logger(['parsed mail list', len(parsed_mail_list)])
+        if should_otg:
+            logger('should_otg is true')
+            go_otg(resultObj['otg_mail'])
+        sleep(15*5)
+        logger('=================================================')
+        # logger(['parsed mail list', len(parsed_mail_list)])
     except KeyboardInterrupt:
         close_server()
         break

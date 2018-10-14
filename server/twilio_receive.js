@@ -3,6 +3,7 @@ const express = require('express');
 const { MessagingResponse } = require('twilio').twiml;
 const bodyParser = require('body-parser');
 const axios = require('axios');
+const sendSMS = require('./send_sms');
 
 const { FetchMessage, ParseMessage } = require('./process_message');
 
@@ -18,6 +19,13 @@ const PHONE_NUMBER = '+919722761117';
 const mailIdsCache = {};
 const pagination = {};
 const messagesCache = {};
+
+app.post('/otg', async (req, res) => {
+  const mail = req.body.mail;
+  console.log('======>> req', req.body.mail)
+  sendSMS(mail)
+  res.send('successfully sent sms')
+});
 
 app.post('/sms', async (req, res) => {
   const twiml = new MessagingResponse();

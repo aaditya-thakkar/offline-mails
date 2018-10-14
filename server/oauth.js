@@ -12,18 +12,18 @@ const SCOPES = [
 
 
 const credentials = { // client id and secret key copied in mailReceiverServer.py
-  "client_id":"379366710827-j826dg3jhdius4vin7e712hnm6gmek7j.apps.googleusercontent.com",
-  "project_id":"valiant-carrier-219423",
-  "auth_uri":"https://accounts.google.com/o/oauth2/auth",
-  "token_uri":"https://www.googleapis.com/oauth2/v3/token",
-  "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
-  "client_secret":"CEdtjXJSgxsMsAdvLKQL4e24",
-  "redirect_uris":[
-    "http://localhost:3000/authcb"
-  ],
-  "javascript_origins":[
-    "http://localhost:3000"
-  ]
+    "client_id":"259125367752-rgm0g60nt24v5q36fvrvquj23l8ss7p8.apps.googleusercontent.com",
+    "project_id":"mail-graber-proj",
+    "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+    "token_uri":"https://www.googleapis.com/oauth2/v3/token",
+    "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret":"2y7E6CP0Gid4LjiHKqa9mm8s",
+    "redirect_uris":[
+      "http://localhost:3000/authcb"
+    ],
+    "javascript_origins":[
+      "http://localhost:3000"
+    ]
 };
 
 function getOAuthClient() {
