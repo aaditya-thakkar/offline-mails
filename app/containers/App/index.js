@@ -15,6 +15,10 @@ const AppWrapper = styled.div`
   min-height: 100%;
   padding: 0 16px;
   flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 450px;
 `;
 
 export default function App() {
@@ -24,10 +28,10 @@ export default function App() {
         <meta name="description" content="Offline Mails Grabber" />
       </Helmet>
       <Router history={history}>
-        <div>
+        <span className="full-width">
           <Route exact path="/" component={HomePage} />
           <Route path="/otp" component={OtpAuth} />
-        </div>
+        </span>
       </Router>
     </AppWrapper>
   );
