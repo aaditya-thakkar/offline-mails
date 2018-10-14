@@ -16,9 +16,20 @@ const buttonStyles = css`
   font-size: 16px;
   border: 2px solid #41addd;
   color: #41addd;
+  background: #4285f4;
+  color: #fff;
+  box-shadow: none;
+  /* background: #1a73e8; */
+  border: none;
+  width: 80%;
+  height: 2.5rem;
+  display: flex;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
 
   &:active {
-    background: #41addd;
+    background: rgb(26, 115, 232);
     color: #fff;
   }
 `;

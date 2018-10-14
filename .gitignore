@@ -11,3 +11,4 @@ npm-debug.log
 *.pyc
 
 .vscode
+yarn-error.log
