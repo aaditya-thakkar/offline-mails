@@ -1,10 +1,10 @@
 const { ObjectID } = require('mongodb');
 
 module.exports = (app, db) => {
-  app.get('/fetchMails', (req, res) => {
-    const { phoneNumber } = req.query;
+  app.post('/fetchMails', (req, res) => {
+    const { phoneNumber } = req.body;
     db.collection('mail')
-      .find({ phoneNumber: `+91${phoneNumber}` })
+      .find({ phoneNumber })
       .sort({ time: -1 })
       .limit(40)
       .toArray((err, result) => {
@@ -31,9 +31,9 @@ module.exports = (app, db) => {
   app.post('/mail/insert', (req, res) => {
     const mails = req.body;
     // console.log('===>> receive mails', req.body);
-    db.collection('mail').insertMany(mails, ( err, result ) => {
-        if (err) {
-          res.send({ 'error': 'An error has occurred' });
+    db.collection('mail').insertMany(mails, (err, result) => {
+      if (err) {
+        res.send({ error: 'An error has occurred' });
       } else {
         res.send(result.ops[0]);
       }
