@@ -5,7 +5,7 @@ const axios = require('axios');
 const client = require('twilio')(accountSid, authToken);
 
 function sendOtp(req, res) {
-  const otp = Math.floor(Math.random() * 10000 + 54);
+  const otp = Math.floor(1000 + Math.random() * 9000);
   console.log('here you go', req.body);
 
   const pNum = `+91${req.body.phoneNumber}`;

@@ -17,6 +17,8 @@ export default class HomePage extends React.PureComponent {
       isDisabled: true,
       hasErrored: false,
     };
+    const url = new URL(window.location.href);
+    this.email = url.searchParams.get('email');
   }
 
   render() {
@@ -87,7 +89,7 @@ export default class HomePage extends React.PureComponent {
       method: 'post',
       data: {
         name: this.state.name,
-        email: this.state.email,
+        email: this.email,
         phoneNumber: this.state.phoneNumber,
       },
     }).then(data => {
@@ -106,7 +108,7 @@ export default class HomePage extends React.PureComponent {
       method: 'post',
       data: {
         otp: this.state.otp,
-        email: this.state.email,
+        email: this.email,
         phoneNumber: this.state.phoneNumber,
       },
     })
