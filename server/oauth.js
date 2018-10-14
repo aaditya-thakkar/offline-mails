@@ -7,26 +7,23 @@ const SCOPES = [
   'https://www.googleapis.com/auth/gmail.readonly',
   'https://www.googleapis.com/auth/plus.me',
   'https://www.googleapis.com/auth/userinfo.email',
+  'https://mail.google.com/',
 ];
-// const TOKEN_PATH = 'token.json';
 
-// // Load client secrets from a local file.
-// fs.readFile('credentials.json', (err, content) => {
-//   if (err) return console.log('Error loading client secret file:', err);
-//   // Authorize a client with credentials, then call the Gmail API.
-//   authorize(JSON.parse(content), listLabels);
-// });
 
-const credentials = {
-  client_id:
-    '161526488455-dpk35h1hndeic5s6c0puln4j0rs5d7j4.apps.googleusercontent.com',
-  project_id: 'maah-omg',
-  auth_uri: 'https://accounts.google.com/o/oauth2/auth',
-  token_uri: 'https://www.googleapis.com/oauth2/v3/token',
-  auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
-  client_secret: 'G1AJQb-2FufLyyu_wbZVIJZj',
-  redirect_uris: ['http://localhost:3000/authcb'],
-  javascript_origins: ['http://localhost:3000'],
+const credentials = { // client id and secret key copied in mailReceiverServer.py
+  "client_id":"379366710827-j826dg3jhdius4vin7e712hnm6gmek7j.apps.googleusercontent.com",
+  "project_id":"valiant-carrier-219423",
+  "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+  "token_uri":"https://www.googleapis.com/oauth2/v3/token",
+  "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+  "client_secret":"CEdtjXJSgxsMsAdvLKQL4e24",
+  "redirect_uris":[
+    "http://localhost:3000/authcb"
+  ],
+  "javascript_origins":[
+    "http://localhost:3000"
+  ]
 };
 
 function getOAuthClient() {

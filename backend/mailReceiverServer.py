@@ -9,11 +9,49 @@ import time
 from time import sleep
 from utils import logger, my_concat
 
-def connect_inbox():
-    logger('connecting to imap')
+user_id_access_token = {}
+
+def get_user_list():
+    users = requests.get('http://localhost:8082/users').json()
+    verified_users = []
+    for user in users:
+        if user['verified'] is True:
+            verified_users.append(user)
+    logger(['verified users', verified_users])
+    return verified_users
+
+
+def xoauth_authenticate(emailId, access_token):
+    logger([access_token, emailId])
+    def _auth(*args, **kwargs):
+        return 'user=%s\1auth=Bearer %s\1\1' % (emailId, access_token)
+    return 'XOAUTH2', _auth
+
+def refresh_token(tokens):
+    logger('refreshing tokens')
+    r = requests.post(
+        'https://www.googleapis.com/oauth2/v4/token',
+        headers={'content-type': 'application/x-www-form-urlencoded'},
+        data={
+            'grant_type': 'refresh_token',
+            'client_id': '379366710827-j826dg3jhdius4vin7e712hnm6gmek7j.apps.googleusercontent.com',
+            'client_secret': 'CEdtjXJSgxsMsAdvLKQL4e24',
+            'refresh_token': tokens['refresh_token']
+        }
+    )
+    access_token = r.json()['access_token']
+    logger(['latest access_token', access_token])
+    return access_token
+
+def connect_inbox(users): 
+    user = users[0]
+    logger('connecting to imap, refreshing access token')
+    user_email = user['email']
+    latest_access_token = refresh_token(user['tokens']) # update access token
     M = imaplib.IMAP4_SSL('imap.gmail.com')
-    logger('logging')
-    M.login('abhisandhyasp.ap@gmail.com', '*******')
+    logger(['logging', user_email, latest_access_token])
+    M.authenticate(*xoauth_authenticate(user_email, latest_access_token))
+    logger('authenticated')
     M.select()
     return M
 
@@ -120,7 +158,8 @@ def close_server():
 #     except KeyboardInterrupt:
 #         close_server()
 #         break
-mailConn = connect_inbox()
+user_list = get_user_list()
+mailConn = connect_inbox(user_list)
 try:
     mailIds = extract_mail_ids(mailConn)
     # logger(['extracted mail ids', mailIds[-50:]])
