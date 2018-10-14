@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import HomePage from 'containers/HomePage';
 import OtpAuth from 'containers/OtpAuth';
+import Dashboard from 'containers/Dashboard';
 import history from './history';
 
 const AppWrapper = styled.div`
@@ -31,6 +32,7 @@ export default function App() {
         <span className="full-width">
           <Route exact path="/" component={HomePage} />
           <Route path="/otp" component={OtpAuth} />
+          <Route path="/dashboard" component={Dashboard} />
         </span>
       </Router>
     </AppWrapper>

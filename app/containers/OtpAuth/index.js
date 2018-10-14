@@ -1,14 +1,15 @@
 import React from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
+
 import OtpInput from 'react-otp-input';
 
 import { Helmet } from 'react-helmet';
 import Button from 'components/Button';
 import Input from 'components/Input';
-import CenteredSection from './CenteredSection';
 
 /* eslint-disable react/prefer-stateless-function */
-export default class HomePage extends React.PureComponent {
+export default class OtpAuth extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -118,10 +119,8 @@ export default class HomePage extends React.PureComponent {
         phoneNumber: this.state.phoneNumber,
       },
     })
-      .then(data => {
-        if (data === 'verified') {
-          console.log('otp has been verified');
-        }
+      .then(() => {
+        this.props.history.push('/dashboard');
       })
       .catch(() => {
         this.setState({
@@ -130,3 +129,7 @@ export default class HomePage extends React.PureComponent {
       });
   };
 }
+
+OtpAuth.propTypes = {
+  history: PropTypes.object,
+};
