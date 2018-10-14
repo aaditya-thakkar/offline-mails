@@ -10193,6 +10193,11 @@ react-loadable@^5.4.0:
   dependencies:
     prop-types "^15.5.0"
 
+react-otp-input@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/react-otp-input/-/react-otp-input-0.2.1.tgz#add3028350262e904b2337736bc93a6246c0ab00"
+  integrity sha512-ljXzBsMZcTsPDOqqcuNXXxzXYMd3+hq2kPBGIGMZQWZ3bV1yFNU8Mudp52rSJeVJfdsAClLYTup53zXqWIOAog==
+
 react-reconciler@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.7.0.tgz#9614894103e5f138deeeb5eabaf3ee80eb1d026d"
